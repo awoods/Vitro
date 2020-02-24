@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +121,9 @@ public class RDFUploadController extends JenaIngestController {
             ? getABoxModel(getServletContext())
             : ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
 
+        Instant start = Instant.now();
+        log.info("Start ingest: " + start);
+
         /* ********************* GET RDF by URL ********************** */
         String RDFUrlStr =  request.getParameter("rdfUrl");
         if (RDFUrlStr != null && RDFUrlStr.length() > 0) {
@@ -224,6 +230,10 @@ public class RDFUploadController extends JenaIngestController {
         } else {
             request.setAttribute("uploadDesc", "RDF upload successful.");
         }
+
+        Instant end = Instant.now();
+        Duration total = Duration.between(start, end);
+        log.info("Stop ingest: " + end + ", total time: " + total);
 
         request.setAttribute("title","Ingest RDF Data");
 
