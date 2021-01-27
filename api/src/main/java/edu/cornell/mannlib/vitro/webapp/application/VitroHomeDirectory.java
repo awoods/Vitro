@@ -59,72 +59,72 @@ public class VitroHomeDirectory {
 		return discoveryMessage;
 	}
 
-  public void populate() {
-      File vhdDir = getPath().toFile();
+	public void populate() {
+		File vhdDir = getPath().toFile();
 
-      if (!vhdDir.isDirectory() || vhdDir.list() == null) {
-          throw new RuntimeException("Application home dir is not a directory! " + vhdDir);
-      }
+		if (!vhdDir.isDirectory() || vhdDir.list() == null) {
+			throw new RuntimeException("Application home dir is not a directory! " + vhdDir);
+		}
 
-      InputStream homeDirTar = getHomeDirTar();
+		InputStream homeDirTar = getHomeDirTar();
 
-      // The above InputStream is closed in the 'untar' method
-      untar(homeDirTar, vhdDir);
-  }
+		// The above InputStream is closed in the 'untar' method
+		untar(homeDirTar, vhdDir);
+	}
 
-    private InputStream getHomeDirTar() {
-        String tarLocation = "/WEB-INF/resources/home-files/vivo-home.tar";
-        InputStream tar = ctx.getResourceAsStream(tarLocation);
-        if (tar == null) {
-            log.error("Application home tar not found in: " + tarLocation);
-            throw new RuntimeException("Application home tar not found in: " + tarLocation);
-        }
+	private InputStream getHomeDirTar() {
+		String tarLocation = "/WEB-INF/resources/home-files/vivo-home.tar";
+		InputStream tar = ctx.getResourceAsStream(tarLocation);
+		if (tar == null) {
+			log.error("Application home tar not found in: " + tarLocation);
+			throw new RuntimeException("Application home tar not found in: " + tarLocation);
+		}
 
-        return tar;
-    }
+		return tar;
+	}
 
-    /**
-     * An non-destructive untar process. 
-     * 
-     * @param tar         tar file stream of prepacked vivo home directory
-     * @param destination vivo home directory
-     */
-    private void untar(InputStream tar, File destination) {
-        log.info("Populating VIVO home at: " + destination.getPath());
+	/**
+	 * An non-destructive untar process.
+	 * 
+	 * @param tar         tar file stream of prepacked vivo home directory
+	 * @param destination vivo home directory
+	 */
+	private void untar(InputStream tar, File destination) {
+		log.info("Populating VIVO home at: " + destination.getPath());
 
-        TarArchiveEntry tarEntry;
-        try (TarArchiveInputStream tarInput = new TarArchiveInputStream(tar)) {
-            while ((tarEntry = tarInput.getNextTarEntry()) != null) {
+		TarArchiveEntry tarEntry;
+		try (TarArchiveInputStream tarInput = new TarArchiveInputStream(tar)) {
+			while ((tarEntry = tarInput.getNextTarEntry()) != null) {
 
-                // Use the example configurations
-                String outFilename = tarEntry.getName().replace("example.", "");
-                File outFile = new File(destination, outFilename);
+				// Use the example configurations
+				String outFilename = tarEntry.getName().replace("example.", "");
+				File outFile = new File(destination, outFilename);
 
-                // Is the entry a directory?
-                if (tarEntry.isDirectory()) {
-                    if (outFile.exists()) {
-                        log.info(outFile.getAbsolutePath() + " already exists.");
-                    } else {
-                        outFile.mkdirs();
-                        log.info(outFile.getAbsolutePath() + " created.");
-                    }
-                } else {
-                    // Entry is a File
-                    if (outFile.exists()) {
-                        log.info(outFile.getAbsolutePath() + " already exists.");
-                    } else {
-                        outFile.getParentFile().mkdirs();
-                        try (FileOutputStream fos = new FileOutputStream(outFile)) {
-                            IOUtils.copy(tarInput, fos);
-                            log.info(outFile.getAbsolutePath() + " created.");
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error creating home directory!", e);
-        }
-    }
+				// Is the entry a directory?
+				if (tarEntry.isDirectory()) {
+					if (outFile.exists()) {
+						log.info(outFile.getAbsolutePath() + " already exists.");
+					} else {
+						outFile.mkdirs();
+						log.info(outFile.getAbsolutePath() + " created.");
+					}
+				} else {
+					// Entry is a File
+					if (outFile.exists()) {
+						log.info(outFile.getAbsolutePath() + " already exists.");
+					} else {
+						outFile.getParentFile().mkdirs();
+						try (FileOutputStream fos = new FileOutputStream(outFile)) {
+							IOUtils.copy(tarInput, fos);
+							log.info(outFile.getAbsolutePath() + " created.");
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("Error creating home directory!", e);
+		}
+	}
 
 	/**
 	 * Find something that specifies the location of the Vitro home directory.
