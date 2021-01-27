@@ -17,12 +17,13 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import edu.cornell.mannlib.vitro.webapp.config.ContextProperties;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import edu.cornell.mannlib.vitro.webapp.config.ContextProperties;
 
 /**
  * Encapsulates some of the info relating to the Vitro home directory.
