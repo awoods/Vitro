@@ -59,6 +59,11 @@ public class VitroHomeDirectory {
 		return discoveryMessage;
 	}
 
+	/**
+	 * Populates VIVO home directory with files required to run.
+	 * 
+	 * NOTE: Will not overwrite existing files.
+	 */
 	public void populate() {
 		File vhdDir = getPath().toFile();
 
@@ -66,34 +71,22 @@ public class VitroHomeDirectory {
 			throw new RuntimeException("Application home dir is not a directory! " + vhdDir);
 		}
 
-		InputStream homeDirTar = getHomeDirTar();
-
-		// The above InputStream is closed in the 'untar' method
-		untar(homeDirTar, vhdDir);
-	}
-
-	private InputStream getHomeDirTar() {
-		String tarLocation = "/WEB-INF/resources/home-files/vivo-home.tar";
-		InputStream tar = ctx.getResourceAsStream(tarLocation);
-		if (tar == null) {
-			log.error("Application home tar not found in: " + tarLocation);
-			throw new RuntimeException("Application home tar not found in: " + tarLocation);
-		}
-
-		return tar;
+		untar(vhdDir);
 	}
 
 	/**
 	 * An non-destructive untar process.
 	 * 
-	 * @param tar         tar file stream of prepacked vivo home directory
 	 * @param destination vivo home directory
 	 */
-	private void untar(InputStream tar, File destination) {
+	private void untar(File destination) {
 		log.info("Populating VIVO home at: " + destination.getPath());
 
 		TarArchiveEntry tarEntry;
-		try (TarArchiveInputStream tarInput = new TarArchiveInputStream(tar)) {
+		try (
+			InputStream homeDirTar = getHomeDirTar();
+			TarArchiveInputStream tarInput = new TarArchiveInputStream(homeDirTar);
+		) {
 			while ((tarEntry = tarInput.getNextTarEntry()) != null) {
 
 				// Use the example configurations
@@ -124,6 +117,22 @@ public class VitroHomeDirectory {
 		} catch (IOException e) {
 			throw new RuntimeException("Error creating home directory!", e);
 		}
+	}
+
+	/**
+	 * Get prepacked VIVO home tar file as input stream.
+	 * 
+	 * @return input stream of VIVO home tar file
+	 */
+	private InputStream getHomeDirTar() {
+		String tarLocation = "/WEB-INF/resources/home-files/vivo-home.tar";
+		InputStream tar = ctx.getResourceAsStream(tarLocation);
+		if (tar == null) {
+			log.error("Application home tar not found in: " + tarLocation);
+			throw new RuntimeException("Application home tar not found in: " + tarLocation);
+		}
+
+		return tar;
 	}
 
 	/**
