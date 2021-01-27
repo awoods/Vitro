@@ -89,9 +89,9 @@ public class VitroHomeDirectory {
 	}
 
 	/**
-	 * An non-destructive untar process.
+	 * A non-destructive untar process that returns checksum digest of tarred files.
 	 * 
-	 * @param destination vivo home directory
+	 * @param destination VIVO home directory
 	 * @return digest of each files checksum
 	 */
 	private Map<String, String> untar(File destination) {
