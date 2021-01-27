@@ -158,6 +158,11 @@ public class VitroHomeDirectory {
 		return digest;
 	}
 
+	/**
+	 * Load checksum digest of VIVO home directory.
+	 * 
+	 * @return checksum digest
+	 */
 	private Map<String, String> loadDigest() {
 		File storedDigest = new File(getPath().toFile(), DIGEST_FILE_NAME);
 		if (storedDigest.exists() && storedDigest.isFile()) {
@@ -175,6 +180,11 @@ public class VitroHomeDirectory {
 		return new HashMap<>();
 	}
 
+	/**
+	 * Write VIVO home checksum digest following md5 format; `<checksum> *<file>`.
+	 * 
+	 * @param digest checksum digest to write
+	 */
 	private void writeDigest(Map<String, String> digest) {
 		File storedDigest = new File(getPath().toFile(), DIGEST_FILE_NAME);
 		try (
