@@ -103,7 +103,7 @@ public class VitroHomeDirectory {
 				// Is the entry a directory?
 				if (tarEntry.isDirectory()) {
 					if (outFile.exists()) {
-						log.info(outFile.getAbsolutePath() + " already exists.");
+						log.debug(outFile.getAbsolutePath() + " already exists.");
 					} else {
 						outFile.mkdirs();
 						log.info(outFile.getAbsolutePath() + " created.");
@@ -111,7 +111,7 @@ public class VitroHomeDirectory {
 				} else {
 					// Entry is a File
 					if (outFile.exists()) {
-						log.info(outFile.getAbsolutePath() + " already exists.");
+						log.debug(outFile.getAbsolutePath() + " already exists.");
 					} else {
 						outFile.getParentFile().mkdirs();
 						try (FileOutputStream fos = new FileOutputStream(outFile)) {
