@@ -181,7 +181,6 @@ public class VitroHomeDirectory {
 			FileOutputStream fos = new FileOutputStream(storedDigest); 
 			OutputStreamWriter osw = new OutputStreamWriter(fos);
 		) {
-			Files.deleteIfExists(storedDigest.toPath());
 			for (Map.Entry<String, String> entry : digest.entrySet()) {
 				String filename = entry.getKey();
 				String checksum = entry.getValue();
@@ -193,18 +192,55 @@ public class VitroHomeDirectory {
 		log.info("VIVO home digest created: " + storedDigest.getPath());
 	}
 
+	/**
+	 * Split checksum.
+	 * 
+	 * @param checksum checksum delimited by space and asterisks `<checksum> *<file>`
+	 * @return split checksum
+	 */
 	private String[] split(String checksum) {
 		return checksum.split("\\s+");
 	}
 
+	/**
+	 * Get value from split checksum.
+	 * 
+	 * @param checksum split checksum
+	 * @return checksum value
+	 */
 	private String checksumValue(String[] checksum) {
 		return checksum[0];
 	}
 
+	/**
+	 * Return file from split checksum.
+	 * 
+	 * @param checksum split checksum
+	 * @return filename
+	 */
 	private String checksumFile(String[] checksum) {
 		return checksum[1].startsWith("*")
 			? checksum[1].substring(1)
 			: checksum[1];
+	}
+
+	/**
+	 * Get m25 checksum from bytes.
+	 * 
+	 * @param bytes bytes from file
+	 * @return m25 checksum as string
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 */
+	private String checksum(byte[] bytes) throws IOException, NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		md.update(bytes);
+		// bytes to hex
+		StringBuilder result = new StringBuilder();
+		for (byte b : md.digest()) {
+			result.append(String.format("%02x", b));
+		}
+		return result.toString();
 	}
 
 	/**
@@ -221,17 +257,6 @@ public class VitroHomeDirectory {
 		}
 
 		return tar;
-	}
-
-	public String checksum(byte[] bytes) throws IOException, NoSuchAlgorithmException {
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		md.update(bytes);
-		// bytes to hex
-		StringBuilder result = new StringBuilder();
-		for (byte b : md.digest()) {
-			result.append(String.format("%02x", b));
-		}
-		return result.toString();
 	}
 
 	/**
