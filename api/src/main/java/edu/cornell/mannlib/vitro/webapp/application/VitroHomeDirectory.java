@@ -74,7 +74,7 @@ public class VitroHomeDirectory {
 	/**
 	 * Populates VIVO home directory with files required to run.
 	 * 
-	 * NOTE: Will not overwrite existing files.
+	 * NOTE: Will not overwrite any modified files.
 	 */
 	public void populate() {
 		File vhdDir = getPath().toFile();
