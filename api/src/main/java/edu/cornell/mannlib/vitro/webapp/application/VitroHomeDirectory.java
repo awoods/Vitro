@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.InitialContext;
 import javax.servlet.ServletContext;
 
 import edu.cornell.mannlib.vitro.webapp.config.ContextProperties;
@@ -84,6 +83,12 @@ public class VitroHomeDirectory {
         return tar;
     }
 
+    /**
+     * An non-destructive untar process. 
+     * 
+     * @param tar         tar file stream of prepacked vivo home directory
+     * @param destination vivo home directory
+     */
     private void untar(InputStream tar, File destination) {
         log.info("Populating VIVO home at: " + destination.getPath());
 
@@ -97,15 +102,22 @@ public class VitroHomeDirectory {
 
                 // Is the entry a directory?
                 if (tarEntry.isDirectory()) {
-                    if (!outFile.exists()) {
+                    if (outFile.exists()) {
+                        log.info(outFile.getAbsolutePath() + " already exists.");
+                    } else {
                         outFile.mkdirs();
+                        log.info(outFile.getAbsolutePath() + " created.");
                     }
-
                 } else {
                     // Entry is a File
-                    outFile.getParentFile().mkdirs();
-                    try (FileOutputStream fos = new FileOutputStream(outFile)) {
-                        IOUtils.copy(tarInput, fos);
+                    if (outFile.exists()) {
+                        log.info(outFile.getAbsolutePath() + " already exists.");
+                    } else {
+                        outFile.getParentFile().mkdirs();
+                        try (FileOutputStream fos = new FileOutputStream(outFile)) {
+                            IOUtils.copy(tarInput, fos);
+                            log.info(outFile.getAbsolutePath() + " created.");
+                        }
                     }
                 }
             }
