@@ -115,7 +115,6 @@ public class VitroHomeDirectory {
 				if (tarEntry.isDirectory()) {
 					if (!outFile.exists()) {
 						outFile.mkdirs();
-						log.info(outFile.getAbsolutePath() + " created.");
 					}
 				} else {
 					// Entry is a File
@@ -139,7 +138,6 @@ public class VitroHomeDirectory {
 							FileOutputStream fos = new FileOutputStream(outFile);
 						) {
 							IOUtils.copy(is, fos);
-							log.info(outFile.getAbsolutePath() + (exists ? " overwrote." : " created."));
 						}
 					} else {
 						log.info(outFile.getAbsolutePath() + " changes have been preserved.");
