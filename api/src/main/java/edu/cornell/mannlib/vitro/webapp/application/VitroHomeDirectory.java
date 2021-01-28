@@ -6,7 +6,6 @@ import static edu.cornell.mannlib.vitro.webapp.application.BuildProperties.WEBAP
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +28,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -210,9 +210,13 @@ public class VitroHomeDirectory {
 	 * 
 	 * @param checksum split checksum
 	 * @return checksum value
+	 * @throws RuntimeException
 	 */
 	private String checksumValue(String[] checksum) {
-		return checksum[0];
+		if (StringUtils.isNotEmpty(checksum[0])) {
+			return checksum[0];
+		}
+		throw new RuntimeException("Invalid checksum digest!");
 	}
 
 	/**
@@ -220,11 +224,13 @@ public class VitroHomeDirectory {
 	 * 
 	 * @param checksum split checksum
 	 * @return filename
+	 * @throws RuntimeException
 	 */
 	private String checksumFile(String[] checksum) {
-		return checksum[1].startsWith("*")
-			? checksum[1].substring(1)
-			: checksum[1];
+		if (checksum.length == 2 && StringUtils.isNotEmpty(checksum[1]) && checksum[1].startsWith("*")) {
+			return checksum[1].substring(1);
+		}
+		throw new RuntimeException("Invalid checksum digest!");
 	}
 
 	/**
@@ -244,10 +250,9 @@ public class VitroHomeDirectory {
 	 * 
 	 * @param bytes bytes from file
 	 * @return md5 checksum as string
-	 * @throws IOException
 	 * @throws NoSuchAlgorithmException
 	 */
-	private String checksum(byte[] bytes) throws IOException, NoSuchAlgorithmException {
+	private String checksum(byte[] bytes) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("MD5");
 		md.update(bytes);
 		// bytes to hex
