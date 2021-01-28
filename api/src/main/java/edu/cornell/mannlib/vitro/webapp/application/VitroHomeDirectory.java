@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
@@ -215,6 +216,7 @@ public class VitroHomeDirectory {
 	 */
 	private String checksumValue(String[] checksum) {
 		if (StringUtils.isNotEmpty(checksum[0])) {
+
 			return checksum[0];
 		}
 		throw new RuntimeException("Invalid checksum digest!");
@@ -228,7 +230,11 @@ public class VitroHomeDirectory {
 	 * @throws RuntimeException
 	 */
 	private String checksumFile(String[] checksum) {
-		if (checksum.length == 2 && StringUtils.isNotEmpty(checksum[1]) && checksum[1].startsWith("*")) {
+		if (checksum.length == 2 &&
+				Objects.nonNull(checksum[1]) &&
+				checksum[1].startsWith("*") &&
+				checksum[1].length() > 1) {
+
 			return checksum[1].substring(1);
 		}
 		throw new RuntimeException("Invalid checksum digest!");
