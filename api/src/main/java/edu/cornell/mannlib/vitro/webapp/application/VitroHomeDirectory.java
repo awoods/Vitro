@@ -125,10 +125,11 @@ public class VitroHomeDirectory {
 					digest.put(outFilename, checksum(bytes));
 
 					if (outFile.exists()) {
-						// if the stored digest contains the file and its checksum
-						// equals existing file's checksum, it is ok to overwrite
-						write = storedDigest.containsKey(outFilename)
-							&& storedDigest.get(outFilename).equals(checksum(outFile));
+						// if the stored digest contains the file, check to determine if it has changed
+						if (storedDigest.containsKey(outFilename)) {
+							// if file has not changed, overwrite
+							write = storedDigest.get(outFilename).equals(checksum(outFile));
+						}
 					}
 					if (write) {
 						outFile.getParentFile().mkdirs();
