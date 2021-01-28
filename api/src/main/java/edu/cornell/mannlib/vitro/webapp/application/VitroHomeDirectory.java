@@ -131,7 +131,7 @@ public class VitroHomeDirectory {
 					if (exists) {
 						log.info(outFile.getAbsolutePath() + " already exists.");
 						if (storedDigest.containsKey(outFilename)) {
-							write = !storedDigest.get(outFilename).equals(checksum(outFile));
+							write = storedDigest.get(outFilename).equals(checksum(outFile));
 						}
 					}
 					if (write) {
