@@ -74,7 +74,7 @@ public class VitroHomeDirectory {
 	/**
 	 * Populates VIVO home directory with files required to run.
 	 * 
-	 * NOTE: Will not overwrite any modified files.
+	 * NOTE: Will not overwrite any modified files on redeploy.
 	 */
 	public void populate() {
 		File vhdDir = getPath().toFile();
@@ -119,15 +119,14 @@ public class VitroHomeDirectory {
 				} else {
 					// Entry is a File
 					boolean write = true;
-					boolean exists = outFile.exists();
 
 					// reading bytes into memory to avoid having to unreliable reset stream
 					byte[] bytes = IOUtils.toByteArray(tarInput);
 					digest.put(outFilename, checksum(bytes));
 
-					if (exists) {
+					if (outFile.exists()) {
 						// if the stored digest contains the file and its checksum
-						// equals existing file, it is ok to overwrite
+						// equals existing file's checksum, it is ok to overwrite
 						write = storedDigest.containsKey(outFilename)
 							&& storedDigest.get(outFilename).equals(checksum(outFile));
 					}
@@ -229,10 +228,10 @@ public class VitroHomeDirectory {
 	}
 
 	/**
-	 * Get m25 checksum from file.
+	 * Get md5 checksum from file.
 	 * 
 	 * @param file file
-	 * @return m25 checksum as string
+	 * @return md5 checksum as string
 	 * @throws IOException
 	 * @throws NoSuchAlgorithmException
 	 */
@@ -241,10 +240,10 @@ public class VitroHomeDirectory {
 	}
 
 	/**
-	 * Get m25 checksum from bytes.
+	 * Get md5 checksum from bytes.
 	 * 
 	 * @param bytes bytes from file
-	 * @return m25 checksum as string
+	 * @return md5 checksum as string
 	 * @throws IOException
 	 * @throws NoSuchAlgorithmException
 	 */
