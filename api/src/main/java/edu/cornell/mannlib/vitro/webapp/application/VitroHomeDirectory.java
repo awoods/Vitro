@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
@@ -29,7 +29,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,6 +41,8 @@ public class VitroHomeDirectory {
 	private static final Log log = LogFactory.getLog(VitroHomeDirectory.class);
 
 	private static final String DIGEST_FILE_NAME = "digest.md5";
+
+	private static final Pattern CHECKSUM_PATTERN = Pattern.compile("^[a-f0-9]{32} \\*.+$");
 
 	public static VitroHomeDirectory find(ServletContext ctx) {
 		HomeDirectoryFinder finder = new HomeDirectoryFinder(ctx);
@@ -92,7 +93,8 @@ public class VitroHomeDirectory {
 	/**
 	 * A non-destructive untar process that returns checksum digest of tarred files.
 	 * 
-	 * Checksum digest can be manually created with command:
+	 * Checksum digest can be manually created with the following command.
+	 * 
 	 * `find /vivo/home -type f | cut -c3- | grep -E '^bin/|^config/|^rdf/' | xargs md5sum > /vivo/home/digest.md5`
 	 * 
 	 * @param destination VIVO home directory
@@ -165,8 +167,10 @@ public class VitroHomeDirectory {
 		if (storedDigest.exists() && storedDigest.isFile()) {
 			log.info("Reading VIVO home digest: " + storedDigest.getPath());
 			try {
-				return FileUtils.readLines(storedDigest, StandardCharsets.UTF_8)
+				return FileUtils
+					.readLines(storedDigest, StandardCharsets.UTF_8)
 					.stream()
+					.filter(CHECKSUM_PATTERN.asPredicate())
 					.map(this::split)
 					.collect(Collectors.toMap(this::checksumFile, this::checksumValue));
 			} catch (IOException e) {
@@ -215,14 +219,9 @@ public class VitroHomeDirectory {
 	 * 
 	 * @param checksum split checksum
 	 * @return checksum value
-	 * @throws RuntimeException
 	 */
 	private String checksumValue(String[] checksum) {
-		if (StringUtils.isNotEmpty(checksum[0])) {
-
-			return checksum[0];
-		}
-		throw new RuntimeException("Invalid checksum digest!");
+		return checksum[0];
 	}
 
 	/**
@@ -230,15 +229,9 @@ public class VitroHomeDirectory {
 	 * 
 	 * @param checksum split checksum
 	 * @return filename
-	 * @throws RuntimeException
 	 */
 	private String checksumFile(String[] checksum) {
-		boolean hasFilePart = checksum.length == 2 && Objects.nonNull(checksum[1]);
-		if (hasFilePart && checksum[1].startsWith("*") && checksum[1].length() > 1) {
-
-			return checksum[1].substring(1);
-		}
-		throw new RuntimeException("Invalid checksum digest!");
+		return checksum[1].substring(1);
 	}
 
 	/**
