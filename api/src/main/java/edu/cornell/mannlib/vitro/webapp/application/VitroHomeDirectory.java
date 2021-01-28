@@ -92,6 +92,9 @@ public class VitroHomeDirectory {
 	/**
 	 * A non-destructive untar process that returns checksum digest of tarred files.
 	 * 
+	 * Checksum digest can be manually created with command:
+	 * `find /vivo/home -type f | cut -c3- | grep -E '^bin/|^config/|^rdf/' | xargs md5sum > digest.md5`
+	 * 
 	 * @param destination VIVO home directory
 	 * @return digest of each files checksum
 	 */
