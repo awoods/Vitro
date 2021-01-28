@@ -130,9 +130,10 @@ public class VitroHomeDirectory {
 
 					if (exists) {
 						log.info(outFile.getAbsolutePath() + " already exists.");
-						if (storedDigest.containsKey(outFilename)) {
-							write = storedDigest.get(outFilename).equals(checksum(outFile));
-						}
+						// if the stored digest contains the file and its checksum
+						// equals existing file, it is ok to overwrite
+						write = storedDigest.containsKey(outFilename)
+							&& storedDigest.get(outFilename).equals(checksum(outFile));
 					}
 					if (write) {
 						outFile.getParentFile().mkdirs();
