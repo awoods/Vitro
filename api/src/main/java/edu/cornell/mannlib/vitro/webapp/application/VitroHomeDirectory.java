@@ -167,7 +167,7 @@ public class VitroHomeDirectory {
 					.map(this::split)
 					.collect(Collectors.toMap(this::checksumFile, this::checksumValue));
 			} catch (IOException e) {
-				throw new RuntimeException("Error reading home directory checksum digest!", e);
+				throw new RuntimeException("Error reading VIVO home checksum digest!", e);
 			}
 		}
 		log.info("VIVO home digest not found: " + storedDigest.getPath());
@@ -230,10 +230,8 @@ public class VitroHomeDirectory {
 	 * @throws RuntimeException
 	 */
 	private String checksumFile(String[] checksum) {
-		if (checksum.length == 2 &&
-				Objects.nonNull(checksum[1]) &&
-				checksum[1].startsWith("*") &&
-				checksum[1].length() > 1) {
+		boolean hasFilePart = checksum.length == 2 && Objects.nonNull(checksum[1]);
+		if (hasFilePart && checksum[1].startsWith("*") && checksum[1].length() > 1) {
 
 			return checksum[1].substring(1);
 		}
