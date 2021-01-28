@@ -121,7 +121,7 @@ public class VitroHomeDirectory {
 					// Entry is a File
 					boolean write = true;
 
-					// reading bytes into memory to avoid having to unreliable reset stream
+					// reading bytes into memory to avoid having to unreliably reset stream
 					byte[] bytes = IOUtils.toByteArray(tarInput);
 					digest.put(outFilename, checksum(bytes));
 
