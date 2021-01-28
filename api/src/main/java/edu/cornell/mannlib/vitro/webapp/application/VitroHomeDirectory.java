@@ -113,9 +113,7 @@ public class VitroHomeDirectory {
 
 				// Is the entry a directory?
 				if (tarEntry.isDirectory()) {
-					if (outFile.exists()) {
-						log.debug(outFile.getAbsolutePath() + " already exists.");
-					} else {
+					if (!outFile.exists()) {
 						outFile.mkdirs();
 						log.info(outFile.getAbsolutePath() + " created.");
 					}
@@ -129,7 +127,6 @@ public class VitroHomeDirectory {
 					digest.put(outFilename, checksum(bytes));
 
 					if (exists) {
-						log.info(outFile.getAbsolutePath() + " already exists.");
 						// if the stored digest contains the file and its checksum
 						// equals existing file, it is ok to overwrite
 						write = storedDigest.containsKey(outFilename)
