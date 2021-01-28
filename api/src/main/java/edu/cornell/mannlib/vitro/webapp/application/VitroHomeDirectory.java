@@ -124,13 +124,13 @@ public class VitroHomeDirectory {
 					byte[] bytes = IOUtils.toByteArray(tarInput);
 					digest.put(outFilename, checksum(bytes));
 
-					if (outFile.exists()) {
-						// if the stored digest contains the file, check to determine if it has changed
-						if (storedDigest.containsKey(outFilename)) {
-							// if file has not changed, overwrite
-							write = storedDigest.get(outFilename).equals(checksum(outFile));
-						}
+					// if file already exists and stored digest contains the file,
+					// check to determine if it has changed
+					if (outFile.exists() && storedDigest.containsKey(outFilename)) {
+						// if file has not changed, overwrite
+						write = storedDigest.get(outFilename).equals(checksum(outFile));
 					}
+
 					if (write) {
 						outFile.getParentFile().mkdirs();
 						try (
