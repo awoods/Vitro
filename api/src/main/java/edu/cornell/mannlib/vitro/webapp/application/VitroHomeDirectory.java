@@ -170,6 +170,7 @@ public class VitroHomeDirectory {
 			}
 		}
 		log.info("VIVO home digest not found: " + storedDigest.getPath());
+
 		return new HashMap<>();
 	}
 
@@ -255,6 +256,7 @@ public class VitroHomeDirectory {
 		for (byte b : md.digest()) {
 			result.append(String.format("%02x", b));
 		}
+
 		return result.toString();
 	}
 
