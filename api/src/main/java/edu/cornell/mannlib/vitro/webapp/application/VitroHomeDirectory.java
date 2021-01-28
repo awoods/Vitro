@@ -126,15 +126,12 @@ public class VitroHomeDirectory {
 
 					// reading bytes into memory to avoid having to unreliable reset stream
 					byte[] bytes = IOUtils.toByteArray(tarInput);
-
-					String checksum = checksum(bytes);
-
-					digest.put(outFilename, checksum);
+					digest.put(outFilename, checksum(bytes));
 
 					if (exists) {
 						log.info(outFile.getAbsolutePath() + " already exists.");
 						if (storedDigest.containsKey(outFilename)) {
-							write = !storedDigest.get(outFilename).equals(checksum);
+							write = !storedDigest.get(outFilename).equals(checksum(outFile));
 						}
 					}
 					if (write) {
@@ -232,6 +229,18 @@ public class VitroHomeDirectory {
 		return checksum[1].startsWith("*")
 			? checksum[1].substring(1)
 			: checksum[1];
+	}
+
+	/**
+	 * Get m25 checksum from file.
+	 * 
+	 * @param file file
+	 * @return m25 checksum as string
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 */
+	private String checksum(File file) throws IOException, NoSuchAlgorithmException {
+		return checksum(FileUtils.readFileToByteArray(file));
 	}
 
 	/**
